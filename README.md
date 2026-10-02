@@ -134,7 +134,8 @@ npm run dev                  # http://localhost:3000
 4. Dans **Settings → Environment Variables**, ajoutez :
    - `BETTER_AUTH_SECRET` : générée avec `openssl rand -base64 32`
    - `CRON_SECRET` : générée avec `openssl rand -hex 16`
-5. Lancez le déploiement. Les migrations s'appliquent pendant le build.
+5. Lancez le déploiement. Les migrations s'appliquent pendant le build de production ; les
+   prévisualisations (une par pull request) ne touchent pas au schéma.
 
 Pour activer la connexion GitHub (optionnel), créez une
 [OAuth App](https://github.com/settings/developers) avec l'URL de callback
