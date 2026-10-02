@@ -1,0 +1,155 @@
+import { sql } from "drizzle-orm";
+import {
+  boolean,
+  check,
+  index,
+  numeric,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+// ---------------------------------------------------------------------------
+// Tables Better Auth (même forme que `npx @better-auth/cli generate`)
+// ---------------------------------------------------------------------------
+
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
+  image: text("image"),
+  isAnonymous: boolean("is_anonymous").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+export const session = pgTable(
+  "session",
+  {
+    id: text("id").primaryKey(),
+    expiresAt: timestamp("expires_at").notNull(),
+    token: text("token").notNull().unique(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .$onUpdate(() => new Date())
+      .notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+  },
+  (t) => [index("session_user_id_idx").on(t.userId)],
+);
+
+export const account = pgTable(
+  "account",
+  {
+    id: text("id").primaryKey(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at"),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [index("account_user_id_idx").on(t.userId)],
+);
+
+export const verification = pgTable(
+  "verification",
+  {
+    id: text("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [index("verification_identifier_idx").on(t.identifier)],
+);
+
+// ---------------------------------------------------------------------------
+// Tables du simulateur
+// ---------------------------------------------------------------------------
+
+/**
+ * Les montants et quantités sont stockés en `numeric` (décimal exact) et
+ * jamais en flottant : Drizzle les renvoie sous forme de chaîne, que l'on
+ * manipule ensuite avec decimal.js (voir `src/lib/trading.ts`).
+ */
+const decimal = (name: string) => numeric(name, { precision: 28, scale: 8 });
+
+export const tradeSide = pgEnum("trade_side", ["buy", "sell"]);
+
+export const portfolio = pgTable(
+  "portfolio",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    cash: decimal("cash").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [check("portfolio_cash_non_negative", sql`${t.cash} >= 0`)],
+);
+
+export const holding = pgTable(
+  "holding",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    symbol: text("symbol").notNull(),
+    quantity: decimal("quantity").notNull(),
+    /** Somme payée pour la quantité détenue : sert au prix de revient moyen. */
+    costBasis: decimal("cost_basis").notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.symbol] }),
+    check("holding_quantity_positive", sql`${t.quantity} > 0`),
+  ],
+);
+
+export const trade = pgTable(
+  "trade",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    symbol: text("symbol").notNull(),
+    side: tradeSide("side").notNull(),
+    quantity: decimal("quantity").notNull(),
+    price: decimal("price").notNull(),
+    total: decimal("total").notNull(),
+    /** Plus-value réalisée, renseignée uniquement pour les ventes. */
+    realizedPnl: decimal("realized_pnl"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index("trade_user_created_idx").on(t.userId, t.createdAt)],
+);

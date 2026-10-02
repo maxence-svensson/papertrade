@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/*
+ * Design system (voir design-system/papertrade/MASTER.md) : palette
+ * « Fintech/Crypto » de ui-ux-pro-max, style minimaliste « Swiss » en
+ * thème sombre. Chaque paire texte / fond a été vérifiée (WCAG AA ≥ 4,5:1).
+ */
+@theme {
+  --color-bg: #0f172a;
+  --color-surface: #222735;
+  --color-surface-2: #272f42;
+  /* Séparateurs décoratifs */
+  --color-border: #334155;
+  /* Contours de champs et de contrôles (≥ 3:1 sur les cartes) */
+  --color-border-strong: #64748b;
+  --color-fg: #f8fafc;
+  --color-muted: #94a3b8;
+  --color-primary: #f59e0b;
+  --color-on-primary: #0f172a;
+
+  /* Hausse / baisse : teinte texte (contrastée) et teinte de remplissage
+     (bougies, boutons d'achat et de vente), d'après les couleurs de TradingView. */
+  --color-up: #2bb3a4;
+  --color-up-strong: #26a69a;
+  --color-down: #f26d6a;
+  --color-down-strong: #ef5350;
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  /* Tailwind 4 remet le curseur par défaut sur les boutons. */
+  button:not(:disabled),
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Chiffres : police à chasse fixe et chiffres tabulaires, pour que les
+   prix qui changent en direct ne fassent pas bouger la mise en page. */
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bref surlignage quand un prix change */
+@keyframes flash-up {
+  from {
+    background-color: color-mix(in oklab, var(--color-up) 28%, transparent);
+  }
+}
+
+@keyframes flash-down {
+  from {
+    background-color: color-mix(in oklab, var(--color-down) 28%, transparent);
+  }
+}
+
+.flash-up {
+  animation: flash-up 0.9s ease-out;
+}
+
+.flash-down {
+  animation: flash-down 0.9s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-up,
+  .flash-down {
+    animation: none;
+  }
+}
