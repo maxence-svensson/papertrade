@@ -137,10 +137,18 @@ npm run dev                  # http://localhost:3000
 5. Lancez le déploiement. Les migrations s'appliquent pendant le build de production ; les
    prévisualisations (une par pull request) ne touchent pas au schéma.
 
-Pour activer la connexion GitHub (optionnel), créez une
-[OAuth App](https://github.com/settings/developers) avec l'URL de callback
-`https://<votre-projet>.vercel.app/api/auth/callback/github`. Ajoutez ensuite `GITHUB_CLIENT_ID` et
-`GITHUB_CLIENT_SECRET`, puis redéployez.
+Pour activer la connexion GitHub (optionnel) :
+
+1. Créez une [OAuth App](https://github.com/settings/applications/new) avec l'URL de callback
+   `https://<votre-projet>.vercel.app/api/auth/callback/github`.
+2. Dans Vercel, en production : `BETTER_AUTH_URL` (l'URL publique, pour que l'adresse de retour
+   envoyée à GitHub soit toujours la même), `GITHUB_CLIENT_ID` et `GITHUB_CLIENT_SECRET` (en
+   « Sensitive »).
+3. Redéployez. Le bouton « Continuer avec GitHub » apparaît dès que les deux identifiants sont
+   présents ; un invité qui se connecte avec GitHub conserve son portefeuille.
+
+Une OAuth App n'accepte qu'une adresse de retour : la connexion GitHub fonctionne en production,
+pas sur les prévisualisations des pull requests.
 
 Bon à savoir :
 
