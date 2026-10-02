@@ -3,7 +3,7 @@
 Achetez et vendez des cryptomonnaies **au prix réel du marché** avec 10 000 $ fictifs, suivez
 vos plus-values et comparez-vous aux autres joueurs. Aucun argent réel.
 
-**Démo :** _à compléter après le déploiement_
+**Démo :** https://papertrade-five-peach.vercel.app
 
 ![Page de trading : graphique en direct, formulaire d'ordre et position](docs/trade.jpg)
 
