@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { databaseUrl } from "./db/url";
 import { orderSchema } from "./order-schema";
 import { Dec, TradeError, executeBuy, executeSell, valuePortfolio } from "./trading";
 
@@ -147,5 +148,18 @@ describe("orderSchema", () => {
 
   it("rejette un actif hors de la liste", () => {
     expect(orderSchema.safeParse({ symbol: "FAKEUSDT", side: "buy", quantity: "1" }).success).toBe(false);
+  });
+});
+
+describe("databaseUrl", () => {
+  it("rend explicite le mode SSL de Neon", () => {
+    expect(databaseUrl("postgres://u:p@h/db?sslmode=require&channel_binding=require")).toBe(
+      "postgres://u:p@h/db?sslmode=verify-full&channel_binding=require",
+    );
+  });
+
+  it("laisse les autres URLs intactes", () => {
+    expect(databaseUrl("postgres://u:p@localhost:5433/db")).toBe("postgres://u:p@localhost:5433/db");
+    expect(databaseUrl(undefined)).toBeUndefined();
   });
 });

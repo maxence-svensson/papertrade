@@ -9,10 +9,12 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool } from "pg";
 
+import { databaseUrl } from "../src/lib/db/url";
+
 nextEnv.loadEnvConfig(process.cwd());
 
 // Les migrations passent par une connexion directe plutôt que par le pooler.
-const connectionString = process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL;
+const connectionString = databaseUrl(process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL);
 
 if (!connectionString) {
   console.log("DATABASE_URL absente : migrations ignorées.");
