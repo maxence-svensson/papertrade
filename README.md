@@ -5,7 +5,7 @@ vos plus-values et comparez-vous aux autres joueurs. Aucun argent réel.
 
 **Démo :** https://papertrade-five-peach.vercel.app
 
-![Page de trading : graphique en direct, formulaire d'ordre et position](docs/trade.jpg)
+![Accueil : cotations en direct, mode d'emploi et présentation du projet](docs/home.jpg)
 
 ## Pourquoi ce projet
 
@@ -26,6 +26,8 @@ l'exactitude compte, même quand l'argent est fictif.
   GitHub conserve son portefeuille
 - **Pensé pour le clavier** : ligne de commande (tapez `BTC` puis Entrée, ⌘K pour y accéder) et
   touches de fonction F1 à F3 pour changer d'écran
+
+![Page de trading : graphique en direct, ticket d'ordre et position](docs/trade.jpg)
 
 ![Portefeuille : synthèse, répartition et positions](docs/portfolio.jpg)
 
