@@ -5,14 +5,22 @@ import { LivePrice, PriceChange } from "@/components/live-price";
 import { Leader, Panel } from "@/components/panel";
 import { button } from "@/components/ui";
 import { ASSETS, assetSlug } from "@/lib/assets";
+import { SOURCE_URL } from "@/lib/constants";
 import { getSession } from "@/lib/session";
 
 const STEPS = [
-  "Ouvrez un compte invité : un clic, 10 000 $ fictifs, aucune adresse e-mail.",
-  "Choisissez un actif : tapez son code (BTC, ETH…) dans la barre de commande, ou F1.",
-  "Passez un ordre au marché : il est exécuté au prix relu côté serveur, jamais celui du navigateur.",
+  "Ouvrez un compte invité : un clic, 10 000 $ fictifs, aucune adresse e-mail.",
+  "Choisissez un actif : tapez son code (BTC, ETH…) dans la barre de commande, ou F1.",
+  "Passez un ordre au marché : il est exécuté au prix relu côté serveur, jamais celui du navigateur.",
   "Suivez votre portefeuille (F2) et comparez-vous aux autres joueurs (F3).",
 ];
+
+const STACK = [
+  ["Interface", "Next.js 16 · React 19 · Tailwind"],
+  ["Temps réel", "WebSocket Binance · graphique"],
+  ["Serveur", "Server Actions · Postgres · Drizzle"],
+  ["Qualité", "Vitest · CI · Vercel"],
+] as const;
 
 export default async function HomePage() {
   const session = await getSession();
@@ -26,7 +34,7 @@ export default async function HomePage() {
           </h1>
           <p className="max-w-[60ch] leading-relaxed text-muted">
             PaperTrade exécute vos ordres au cours de Binance, à la seconde près. Portefeuille,
-            plus-values et classement sont calculés comme sur une vraie plateforme : seul
+            plus-values et classement sont calculés comme sur une vraie plateforme : seul
             l&apos;argent est faux.
           </p>
         </div>
@@ -79,8 +87,8 @@ export default async function HomePage() {
         </table>
       </Panel>
 
-      <Panel title="Mode d'emploi" className="lg:col-span-2" bodyClassName="p-4">
-        <ol className="grid gap-x-8 gap-y-3 md:grid-cols-2">
+      <Panel title="Mode d'emploi" bodyClassName="p-4">
+        <ol className="space-y-3">
           {STEPS.map((step, index) => (
             <li key={step} className="flex gap-3 leading-relaxed">
               <span aria-hidden className="num text-amber">
@@ -90,6 +98,24 @@ export default async function HomePage() {
             </li>
           ))}
         </ol>
+      </Panel>
+
+      <Panel title="Pourquoi ce projet" bodyClassName="space-y-4 p-4">
+        <p className="leading-relaxed">
+          Je voulais m&apos;entraîner sur Next.js et m&apos;amuser sur un sujet qui m&apos;intéresse :
+          la finance. Un simulateur de trading réunit les deux, avec des données en temps réel et
+          des calculs où l&apos;exactitude compte, même quand l&apos;argent est fictif.
+        </p>
+        <dl>
+          {STACK.map(([label, value]) => (
+            <Leader key={label} label={label}>
+              {value}
+            </Leader>
+          ))}
+        </dl>
+        <a href={SOURCE_URL} className={button.small}>
+          Code source sur GitHub
+        </a>
       </Panel>
     </div>
   );

@@ -32,7 +32,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           </h1>
           <p className="leading-relaxed text-muted">
             {isGuest
-              ? "Connectez-vous avec GitHub : votre portefeuille d'invité sera conservé."
+              ? "Connectez-vous avec GitHub : votre portefeuille d'invité sera conservé."
               : "Aucune carte bancaire, aucune adresse e-mail, aucun argent réel."}
           </p>
         </div>

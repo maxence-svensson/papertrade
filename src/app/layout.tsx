@@ -4,6 +4,7 @@ import { IBM_Plex_Mono } from "next/font/google";
 import { PricesProvider } from "@/components/prices-provider";
 import { SiteHeader } from "@/components/site-header";
 import { getTickersSafe } from "@/lib/binance";
+import { SOURCE_URL } from "@/lib/constants";
 
 import "./globals.css";
 
@@ -43,7 +44,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <footer className="border-t border-line text-xs text-muted">
             <div className="mx-auto flex max-w-[1400px] flex-col gap-1 px-3 py-3 sm:flex-row sm:justify-between sm:px-4">
               <p>Projet éducatif · aucune transaction réelle · pas un conseil en investissement</p>
-              <p>Données de marché : Binance, prix en USDT</p>
+              <p>
+                Données de marché : Binance, prix en USDT ·{" "}
+                <a href={SOURCE_URL} className="text-amber hover:underline">
+                  Code source
+                </a>
+              </p>
             </div>
           </footer>
         </PricesProvider>

@@ -7,6 +7,12 @@ vos plus-values et comparez-vous aux autres joueurs. Aucun argent réel.
 
 ![Page de trading : graphique en direct, formulaire d'ordre et position](docs/trade.jpg)
 
+## Pourquoi ce projet
+
+Je voulais m'entraîner sur Next.js et m'amuser sur un sujet qui m'intéresse : la finance. Un
+simulateur de trading réunit les deux, avec des données en temps réel et des calculs où
+l'exactitude compte, même quand l'argent est fictif.
+
 ## Fonctionnalités
 
 - **Cours en temps réel** de 10 cryptomonnaies via le flux WebSocket public de Binance

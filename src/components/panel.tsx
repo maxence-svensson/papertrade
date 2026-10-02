@@ -35,16 +35,19 @@ export function Panel({
   );
 }
 
-/** Ligne « libellé ........ valeur », à la manière d'un écran de terminal. */
+/**
+ * Ligne « libellé ........ valeur », à la manière d'un écran de terminal.
+ * Si la valeur ne tient pas sur la ligne, elle passe dessous, calée à droite.
+ */
 export function Leader({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="flex items-baseline gap-2 py-1">
+    <div className="flex flex-wrap items-baseline gap-x-2 py-1">
       {/* Les pointillés restent dans le <dt> : un <dl> n'accepte que des <dt> et des <dd>. */}
-      <dt className="flex min-w-0 flex-1 items-baseline gap-2">
-        <span className="caps shrink-0 text-xs text-muted">{label}</span>
+      <dt className="flex flex-auto items-baseline gap-2">
+        <span className="caps text-xs text-muted">{label}</span>
         <span aria-hidden className="min-w-4 flex-1 border-b border-dotted border-line-strong/60" />
       </dt>
-      <dd className="num text-right">{children}</dd>
+      <dd className="num ml-auto text-right">{children}</dd>
     </div>
   );
 }
