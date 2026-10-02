@@ -42,5 +42,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Skills Claude Code installées localement (ui-ux-pro-max)
+# Skills pour assistants de code installées localement (ui-ux-pro-max, Neon)
 /.claude/skills/
+/.agents/
+skills-lock.json
