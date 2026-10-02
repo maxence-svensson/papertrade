@@ -3,15 +3,11 @@
 import { useActionState, useId, useState } from "react";
 
 import { placeOrder, type OrderState } from "@/app/actions";
-import {
-  ArrowsClockwiseIcon,
-  CheckCircleIcon,
-  InfoIcon,
-  WalletIcon,
-  WarningCircleIcon,
-} from "@/components/icons";
 import { LivePrice } from "@/components/live-price";
+import { Leader } from "@/components/panel";
 import { useTicker } from "@/components/prices-provider";
+import { Spinner } from "@/components/spinner";
+import { button } from "@/components/ui";
 import type { Asset } from "@/lib/assets";
 import { formatQuantity, formatUsd } from "@/lib/format";
 
@@ -81,11 +77,11 @@ export function OrderForm({
     .join(" ");
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="space-y-4">
       <input type="hidden" name="symbol" value={asset.symbol} />
       <input type="hidden" name="side" value={side} />
 
-      <div className="grid grid-cols-2 gap-1 rounded-lg bg-bg p-1" role="group" aria-label="Sens de l'ordre">
+      <div className="grid grid-cols-2 border border-line" role="group" aria-label="Sens de l'ordre">
         {(["buy", "sell"] as const).map((value) => {
           const active = side === value;
           return (
@@ -97,42 +93,41 @@ export function OrderForm({
                 edit();
                 setSide(value);
               }}
-              className={`h-10 rounded-md text-sm font-semibold transition-colors ${
+              className={`caps h-9 text-sm transition-colors ${
                 active
                   ? value === "buy"
-                    ? "bg-up-strong text-on-primary"
-                    : "bg-down-strong text-on-primary"
-                  : "text-muted hover:bg-surface-2 hover:text-fg"
+                    ? "bg-up text-on-amber"
+                    : "bg-down text-on-amber"
+                  : "text-muted hover:bg-hover hover:text-fg"
               }`}
             >
-              {value === "buy" ? "Acheter" : "Vendre"}
+              {value === "buy" ? "Achat" : "Vente"}
             </button>
           );
         })}
       </div>
 
-      <div className="flex items-center justify-between text-sm">
-        <span className="flex items-center gap-1.5 text-muted">
-          <WalletIcon aria-hidden size={16} />
-          Disponible
-        </span>
-        <span className="num font-medium">
+      <dl>
+        <Leader label="Disponible">
           {isBuy ? formatUsd(cash) : `${formatQuantity(holdingQuantity ?? 0)} ${asset.base}`}
-        </span>
-      </div>
+        </Leader>
+      </dl>
 
       <div className="space-y-2">
-        <label htmlFor={`${id}-quantity`} className="text-sm font-medium">
-          Quantité
+        <label htmlFor={`${id}-quantity`} className="caps text-xs text-muted">
+          Quantité ({asset.base})
         </label>
         <div
           // Bordure de 2 px au focus (1 px + anneau), rouge si la saisie dépasse le disponible.
-          className={`flex h-12 items-center rounded-lg border bg-bg transition-colors focus-within:ring-1 ${
+          className={`flex h-11 items-center border bg-bg transition-colors focus-within:ring-1 ${
             overLimit
               ? "border-down focus-within:ring-down"
-              : "border-border-strong focus-within:border-primary focus-within:ring-primary"
+              : "border-line-strong focus-within:border-amber focus-within:ring-amber"
           }`}
         >
+          <span aria-hidden className="pl-3 text-amber">
+            &gt;
+          </span>
           <input
             id={`${id}-quantity`}
             name="quantity"
@@ -147,78 +142,66 @@ export function OrderForm({
               setQuantity(event.target.value);
             }}
             // Le contour du conteneur sert d'indicateur de focus.
-            className="num h-full w-full bg-transparent px-3 text-base outline-none placeholder:text-muted/70"
+            className="num h-full w-full bg-transparent px-2 text-base outline-none placeholder:text-muted/70"
           />
-          <span className="pr-3 text-sm font-medium text-muted">{asset.base}</span>
+          <span className="pr-3 text-xs text-muted">{asset.base}</span>
         </div>
         <p id={`${id}-help`} className="sr-only">
           Saisissez une quantité en {asset.base}, avec 8 décimales au maximum.
         </p>
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-4 gap-1">
           {PERCENTS.map((percent) => (
             <button
               key={percent}
               type="button"
               onClick={() => fill(percent)}
               aria-label={`${percent * 100} % du disponible`}
-              className="num h-8 rounded-md border border-border text-xs text-muted transition-colors hover:border-primary hover:text-fg"
+              className={`${button.small} w-full px-0`}
             >
               {percent === 1 ? "Max" : `${percent * 100} %`}
             </button>
           ))}
         </div>
         {overLimit && (
-          <p id={`${id}-limit`} className="flex items-center gap-1.5 text-sm text-down">
-            <WarningCircleIcon aria-hidden size={16} className="shrink-0" />
+          <p id={`${id}-limit`} className="text-xs text-down">
+            <span aria-hidden>! </span>
             {limitMessage}
           </p>
         )}
       </div>
 
-      <dl className="space-y-2 rounded-lg bg-bg p-3 text-sm">
-        <div className="flex justify-between">
-          <dt className="text-muted">Prix du marché</dt>
-          <dd>
-            <LivePrice symbol={asset.symbol} />
-          </dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-muted">Total estimé</dt>
-          <dd className="num font-medium">{estimate === null ? "—" : `≈ ${formatUsd(estimate)}`}</dd>
-        </div>
+      <dl className="border-y border-line py-1">
+        <Leader label="Prix du marché">
+          <LivePrice symbol={asset.symbol} />
+        </Leader>
+        <Leader label="Total estimé">{estimate === null ? "—" : `≈ ${formatUsd(estimate)}`}</Leader>
       </dl>
 
       <button
         type="submit"
         disabled={pending || !hasQuantity || overLimit}
-        className={`flex h-12 w-full items-center justify-center gap-2 rounded-lg font-semibold text-on-primary transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 ${
-          isBuy ? "bg-up-strong" : "bg-down-strong"
-        }`}
+        className={`${isBuy ? button.buy : button.sell} w-full`}
       >
-        {pending && <ArrowsClockwiseIcon aria-hidden size={18} className="motion-safe:animate-spin" />}
-        {pending ? "Exécution…" : `${isBuy ? "Acheter" : "Vendre"} ${asset.base}`}
+        {pending && <Spinner />}
+        {pending ? "Exécution" : `${isBuy ? "Acheter" : "Vendre"} ${asset.base}`}
       </button>
 
       {/* Toujours présent pour que les lecteurs d'écran annoncent le résultat. */}
-      <div id={`${id}-feedback`} role="status" aria-live="polite" className="min-h-5">
+      <div id={`${id}-feedback`} role="status" aria-live="polite">
         {feedback && (
           <p
-            className={`flex gap-2 rounded-lg border p-3 text-sm ${
-              feedback.status === "error" ? "border-down/40 text-down" : "border-up/40 text-up"
+            className={`border-l-2 py-1 pl-3 text-sm ${
+              feedback.status === "error" ? "border-down text-down" : "border-up text-up"
             }`}
           >
-            {feedback.status === "error" ? (
-              <WarningCircleIcon aria-hidden size={18} weight="fill" className="shrink-0" />
-            ) : (
-              <CheckCircleIcon aria-hidden size={18} weight="fill" className="shrink-0" />
-            )}
+            {/* Le message de succès dit déjà « exécuté » ; seul le refus a besoin d'un préfixe. */}
+            {feedback.status === "error" && <span className="caps">Refusé · </span>}
             {feedback.message}
           </p>
         )}
       </div>
 
-      <p className="flex gap-2 text-xs leading-relaxed text-muted">
-        <InfoIcon aria-hidden size={16} className="shrink-0" />
+      <p className="text-xs leading-relaxed text-muted">
         Ordre au marché : exécuté au dernier prix connu au moment de la validation, relu côté
         serveur.
       </p>

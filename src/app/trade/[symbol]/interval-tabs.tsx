@@ -7,7 +7,7 @@ import { INTERVALS, type Interval } from "@/lib/market";
 /** Choix de l'intervalle des bougies. L'intervalle vit dans l'URL : la vue est partageable. */
 export function IntervalTabs({ path, current }: { path: string; current: Interval }) {
   return (
-    <nav aria-label="Intervalle des bougies" className="flex gap-1">
+    <nav aria-label="Intervalle des bougies" className="flex">
       {INTERVALS.map((i) => {
         const active = i.value === current;
         return (
@@ -16,8 +16,8 @@ export function IntervalTabs({ path, current }: { path: string; current: Interva
             href={`${path}?interval=${i.value}`}
             scroll={false}
             aria-current={active ? "page" : undefined}
-            className={`relative flex h-8 min-w-12 items-center justify-center rounded-md px-2.5 text-xs font-medium transition-colors ${
-              active ? "bg-surface-2 text-fg" : "text-muted hover:text-fg"
+            className={`caps relative flex h-6 min-w-10 items-center justify-center px-2 text-xs transition-colors ${
+              active ? "bg-amber text-on-amber" : "text-muted hover:text-fg"
             }`}
           >
             {i.label}
@@ -36,7 +36,7 @@ function PendingHint() {
     <span
       aria-hidden
       // L'animation ne tourne que pendant le chargement : elle écraserait l'opacité 0.
-      className={`absolute inset-x-2 bottom-1 h-0.5 rounded-full bg-primary transition-opacity ${
+      className={`absolute inset-x-1 -bottom-1 h-0.5 bg-amber transition-opacity ${
         pending ? "opacity-100 motion-safe:animate-pulse" : "opacity-0"
       }`}
     />

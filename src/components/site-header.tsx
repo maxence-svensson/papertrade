@@ -3,43 +3,47 @@ import Link from "next/link";
 import { githubEnabled } from "@/lib/auth";
 import { getSession } from "@/lib/session";
 
-import { ArrowRightIcon } from "./icons";
-import { LogoMark } from "./logo";
+import { Clock } from "./clock";
+import { CommandLine } from "./command-line";
+import { LiveBadge } from "./live-badge";
 import { NavLinks } from "./nav-links";
+import { button } from "./ui";
 import { UserMenu } from "./user-menu";
 
+/** Barre d'état (marque, commande, connexion, heure, session) puis touches de fonction. */
 export async function SiteHeader() {
   const session = await getSession();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-bg/90 backdrop-blur">
-      {/* Sur mobile, la navigation passe sur une seconde ligne. */}
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 px-4 sm:flex-nowrap sm:px-6">
-        <Link href="/" className="flex h-14 items-center gap-2.5 rounded-md font-semibold tracking-tight">
-          <LogoMark />
+    <header className="sticky top-0 z-20 border-b border-line bg-bg">
+      <div className="flex h-11 items-center gap-4 border-b border-line px-3 sm:px-4">
+        <Link href="/" className="caps shrink-0 text-sm text-amber">
           PaperTrade
         </Link>
-
-        <NavLinks className="order-last -mx-2 w-full sm:order-none sm:mx-0 sm:w-auto sm:self-stretch" />
-
-        <div className="ml-auto">
+        <div className="hidden md:block">
+          <CommandLine />
+        </div>
+        <div className="ml-auto flex items-center gap-4">
+          <LiveBadge className="hidden sm:inline-flex" />
+          <span className="hidden lg:inline">
+            <Clock />
+          </span>
           {session ? (
             <UserMenu
               name={session.user.name}
-              image={session.user.image ?? null}
               isGuest={Boolean(session.user.isAnonymous)}
               canLinkGithub={githubEnabled}
             />
           ) : (
-            <Link
-              href="/login"
-              className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
-            >
-              Commencer
-              <ArrowRightIcon aria-hidden size={16} weight="bold" />
+            <Link href="/login" className={button.small}>
+              Connexion
             </Link>
           )}
         </div>
+      </div>
+      <div className="flex items-center justify-between bg-head">
+        <NavLinks />
+        <p className="hidden px-4 text-xs text-muted xl:block">Prix en USDT · source Binance</p>
       </div>
     </header>
   );

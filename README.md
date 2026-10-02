@@ -18,6 +18,8 @@ vos plus-values et comparez-vous aux autres joueurs. Aucun argent réel.
 - **Classement** des joueurs, valorisé aux prix actuels
 - **Compte invité en un clic**, connexion GitHub optionnelle : un invité qui se connecte avec
   GitHub conserve son portefeuille
+- **Pensé pour le clavier** : ligne de commande (tapez `BTC` puis Entrée, ⌘K pour y accéder) et
+  touches de fonction F1 à F3 pour changer d'écran
 
 ![Portefeuille : synthèse, répartition et positions](docs/portfolio.jpg)
 
@@ -26,7 +28,7 @@ vos plus-values et comparez-vous aux autres joueurs. Aucun argent réel.
 | Domaine     | Outils                                                                                  |
 | ----------- | --------------------------------------------------------------------------------------- |
 | Framework   | Next.js 16 (App Router, Server Components, Server Actions), React 19, TypeScript strict |
-| Interface   | Tailwind CSS 4, [Lightweight Charts](https://github.com/tradingview/lightweight-charts), Phosphor Icons, IBM Plex |
+| Interface   | Tailwind CSS 4, [Lightweight Charts](https://github.com/tradingview/lightweight-charts), IBM Plex Mono |
 | Données     | PostgreSQL, Drizzle ORM, Zod                                                            |
 | Auth        | Better Auth (compte invité, OAuth GitHub)                                               |
 | Qualité     | Vitest (tests unitaires et d'intégration sur Postgres), ESLint, GitHub Actions          |
@@ -34,20 +36,21 @@ vos plus-values et comparez-vous aux autres joueurs. Aucun argent réel.
 
 ## Design
 
-Interface sombre au style minimaliste « Swiss », conçue avec la skill
-[UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) puis ajustée à la main.
+Une interface de **terminal de marché** plutôt que d'application grand public : une seule police à
+chasse fixe (IBM Plex Mono), des noirs neutres, l'ambre pour tout ce qui est interactif, le vert et
+le rouge réservés aux variations. Pas d'arrondis ni d'ombres : des panneaux séparés par des filets.
 Les choix et leurs raisons sont dans
 [`design-system/papertrade/MASTER.md`](design-system/papertrade/MASTER.md).
 
-- **Contrastes vérifiés** : chaque paire texte / fond respecte WCAG AA (4,5:1).
+- **Contrastes vérifiés** : chaque paire texte / fond dépasse 6:1 (WCAG AA demande 4,5:1).
 - **Jamais la couleur seule** : hausses et baisses avec flèche et signe, légende O/H/L/C sous le
   graphique.
-- **Chiffres tabulaires** (IBM Plex Mono) : les prix en direct ne font pas bouger la mise en page.
-- **Accessible au clavier** : focus visible, lien d'évitement, tableau triable avec `aria-sort`,
-  confirmations dans un `<dialog>` natif.
+- **Clavier d'abord** : ligne de commande, touches de fonction, focus visible, lien d'évitement,
+  tableau triable avec `aria-sort`, confirmations dans un `<dialog>` natif. Aucun raccourci à
+  touche unique (WCAG 2.1.4).
 - **Responsive** : vérifié de 375 px à 1 440 px.
 
-![Marchés : tableau triable, fourchette 24 h et volumes](docs/markets.jpg)
+![Marchés : tableau triable, bas et haut 24 h, volumes](docs/markets.jpg)
 
 ## Choix techniques
 

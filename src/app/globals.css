@@ -1,31 +1,27 @@
 @import "tailwindcss";
 
 /*
- * Design system (voir design-system/papertrade/MASTER.md) : palette
- * « Fintech/Crypto » de ui-ux-pro-max, style minimaliste « Swiss » en
- * thème sombre. Chaque paire texte / fond a été vérifiée (WCAG AA ≥ 4,5:1).
+ * Direction « Terminal » (voir design-system/papertrade/MASTER.md) : une seule
+ * police à chasse fixe, noirs neutres, ambre pour l'interface, vert et rouge
+ * réservés aux variations. Aucun arrondi, aucune ombre : des panneaux séparés
+ * par des filets. Chaque paire texte / fond dépasse 6:1 (WCAG AA : 4,5:1).
  */
 @theme {
-  --color-bg: #0f172a;
-  --color-surface: #222735;
-  --color-surface-2: #272f42;
-  /* Séparateurs décoratifs */
-  --color-border: #334155;
-  /* Contours de champs et de contrôles (≥ 3:1 sur les cartes) */
-  --color-border-strong: #64748b;
-  --color-fg: #f8fafc;
-  --color-muted: #94a3b8;
-  --color-primary: #f59e0b;
-  --color-on-primary: #0f172a;
+  --color-bg: #070707;
+  --color-panel: #0e0e0e;
+  --color-head: #171717;
+  --color-hover: #1c1c1c;
+  /* Filets décoratifs */
+  --color-line: #2a2a2a;
+  /* Contours de champs et de boutons (≥ 3:1 sur tous les fonds) */
+  --color-line-strong: #737373;
+  --color-fg: #e8e4da;
+  --color-muted: #9b968a;
+  --color-amber: #ffab2e;
+  --color-on-amber: #070707;
+  --color-up: #35d08a;
+  --color-down: #ff6259;
 
-  /* Hausse / baisse : teinte texte (contrastée) et teinte de remplissage
-     (bougies, boutons d'achat et de vente), d'après les couleurs de TradingView. */
-  --color-up: #2bb3a4;
-  --color-up-strong: #26a69a;
-  --color-down: #f26d6a;
-  --color-down-strong: #ef5350;
-
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
@@ -37,6 +33,7 @@
   body {
     background: var(--color-bg);
     color: var(--color-fg);
+    font-family: var(--font-mono);
   }
 
   /* Tailwind 4 remet le curseur par défaut sur les boutons. */
@@ -47,28 +44,37 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-amber);
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-amber);
+    color: var(--color-on-amber);
   }
 }
 
-/* Chiffres : police à chasse fixe et chiffres tabulaires, pour que les
-   prix qui changent en direct ne fassent pas bouger la mise en page. */
+/* Chiffres tabulaires : les prix en direct ne font pas bouger la mise en page. */
 @utility num {
-  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* Libellés en capitales, légèrement espacés (jamais pour du texte courant). */
+@utility caps {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 /* Bref surlignage quand un prix change */
 @keyframes flash-up {
   from {
-    background-color: color-mix(in oklab, var(--color-up) 28%, transparent);
+    background-color: color-mix(in oklab, var(--color-up) 30%, transparent);
   }
 }
 
 @keyframes flash-down {
   from {
-    background-color: color-mix(in oklab, var(--color-down) 28%, transparent);
+    background-color: color-mix(in oklab, var(--color-down) 30%, transparent);
   }
 }
 

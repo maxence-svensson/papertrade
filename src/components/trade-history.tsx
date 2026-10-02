@@ -2,12 +2,14 @@ import Link from "next/link";
 
 import { assetSlug, getAsset } from "@/lib/assets";
 import type { TradeRow } from "@/lib/data/portfolio";
-import { formatDateTime, formatPrice, formatQuantity, formatUsd } from "@/lib/format";
+import { formatDateTime, formatPriceNumber, formatQuantity, formatUsd } from "@/lib/format";
 
-import { AssetIcon } from "./asset-icon";
-import { CaretDownIcon, CaretUpIcon } from "./icons";
 import { Trend } from "./trend";
 
+const th = "px-3 py-2 font-normal";
+const td = "px-3 py-1.5";
+
+/** Historique des ordres, à placer dans un panneau. */
 export function TradeHistory({
   trades,
   showAsset = true,
@@ -18,21 +20,21 @@ export function TradeHistory({
   emptyMessage?: string;
 }) {
   if (trades.length === 0) {
-    return <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted">{emptyMessage}</p>;
+    return <p className="p-3 text-muted">{emptyMessage}</p>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+    <div className="overflow-x-auto">
       <table className="w-full min-w-[600px] text-sm">
-        <thead className="text-left text-xs text-muted">
-          <tr className="border-b border-border">
-            <th scope="col" className="px-4 py-2.5 font-medium">Date</th>
-            {showAsset && <th scope="col" className="px-4 py-2.5 font-medium">Actif</th>}
-            <th scope="col" className="px-4 py-2.5 font-medium">Sens</th>
-            <th scope="col" className="px-4 py-2.5 text-right font-medium">Quantité</th>
-            <th scope="col" className="px-4 py-2.5 text-right font-medium">Prix</th>
-            <th scope="col" className="px-4 py-2.5 text-right font-medium">Total</th>
-            <th scope="col" className="px-4 py-2.5 text-right font-medium">Plus-value</th>
+        <thead className="caps text-left text-xs text-muted">
+          <tr className="border-b border-line">
+            <th scope="col" className={th}>Date</th>
+            {showAsset && <th scope="col" className={th}>Actif</th>}
+            <th scope="col" className={th}>Sens</th>
+            <th scope="col" className={`${th} text-right`}>Quantité</th>
+            <th scope="col" className={`${th} text-right`}>Prix</th>
+            <th scope="col" className={`${th} text-right`}>Total</th>
+            <th scope="col" className={`${th} text-right`}>Plus-value</th>
           </tr>
         </thead>
         <tbody>
@@ -40,16 +42,12 @@ export function TradeHistory({
             const asset = getAsset(t.symbol);
             const isBuy = t.side === "buy";
             return (
-              <tr key={t.id} className="border-b border-border last:border-0">
-                <td className="num px-4 py-3 whitespace-nowrap text-muted">{formatDateTime(t.createdAt)}</td>
+              <tr key={t.id} className="border-b border-line last:border-0">
+                <td className={`${td} num whitespace-nowrap text-muted`}>{formatDateTime(t.createdAt)}</td>
                 {showAsset && (
-                  <td className="px-4 py-3">
+                  <td className={td}>
                     {asset ? (
-                      <Link
-                        href={`/trade/${assetSlug(asset)}`}
-                        className="inline-flex items-center gap-2 rounded-md font-medium hover:text-primary"
-                      >
-                        <AssetIcon asset={asset} size={20} />
+                      <Link href={`/trade/${assetSlug(asset)}`} className="text-amber hover:underline">
                         {asset.base}
                       </Link>
                     ) : (
@@ -57,24 +55,14 @@ export function TradeHistory({
                     )}
                   </td>
                 )}
-                <td className="px-4 py-3">
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold ${
-                      isBuy ? "bg-up/10 text-up" : "bg-down/10 text-down"
-                    }`}
-                  >
-                    {isBuy ? (
-                      <CaretUpIcon aria-hidden size={12} weight="fill" />
-                    ) : (
-                      <CaretDownIcon aria-hidden size={12} weight="fill" />
-                    )}
-                    {isBuy ? "Achat" : "Vente"}
-                  </span>
+                <td className={`${td} caps text-xs whitespace-nowrap ${isBuy ? "text-up" : "text-down"}`}>
+                  <span aria-hidden className="text-[0.75em]">{isBuy ? "▲ " : "▼ "}</span>
+                  {isBuy ? "Achat" : "Vente"}
                 </td>
-                <td className="num px-4 py-3 text-right">{formatQuantity(t.quantity)}</td>
-                <td className="num px-4 py-3 text-right">{formatPrice(t.price)}</td>
-                <td className="num px-4 py-3 text-right">{formatUsd(t.total)}</td>
-                <td className="px-4 py-3 text-right">
+                <td className={`${td} num text-right`}>{formatQuantity(t.quantity)}</td>
+                <td className={`${td} num text-right`}>{formatPriceNumber(t.price)}</td>
+                <td className={`${td} num text-right`}>{formatUsd(t.total)}</td>
+                <td className={`${td} text-right`}>
                   {t.realizedPnl ? (
                     <Trend value={t.realizedPnl}>{formatUsd(t.realizedPnl)}</Trend>
                   ) : (

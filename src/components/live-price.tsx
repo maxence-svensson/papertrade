@@ -5,8 +5,8 @@ import { useState } from "react";
 import { formatPercent, formatPrice } from "@/lib/format";
 import { changePercent } from "@/lib/market";
 
-import { Trend } from "./trend";
 import { useTicker } from "./prices-provider";
+import { Trend } from "./trend";
 
 /**
  * Prix en direct, surligné en vert ou rouge à chaque variation.
@@ -14,7 +14,16 @@ import { useTicker } from "./prices-provider";
  * Pas de région `aria-live` : annoncer chaque tick (toutes les secondes)
  * rendrait la page inutilisable au lecteur d'écran.
  */
-export function LivePrice({ symbol, className = "" }: { symbol: string; className?: string }) {
+export function LivePrice({
+  symbol,
+  className = "",
+  currency = true,
+}: {
+  symbol: string;
+  className?: string;
+  /** `false` pour les tableaux denses, où la devise est rappelée en en-tête. */
+  currency?: boolean;
+}) {
   const price = useTicker(symbol)?.price;
   const [previous, setPrevious] = useState(price);
   const [direction, setDirection] = useState<"up" | "down" | null>(null);
@@ -28,13 +37,14 @@ export function LivePrice({ symbol, className = "" }: { symbol: string; classNam
 
   if (price === undefined) return <span className={`num ${className}`}>—</span>;
 
+  const text = formatPrice(price);
   return (
     <span
       // Changer la clé rejoue l'animation à chaque nouveau prix.
       key={price}
-      className={`num -mx-1 rounded px-1 ${direction ? `flash-${direction}` : ""} ${className}`}
+      className={`num -mx-1 px-1 ${direction ? `flash-${direction}` : ""} ${className}`}
     >
-      {formatPrice(price)}
+      {currency ? text : text.replace(/\s*\$$/, "")}
     </span>
   );
 }

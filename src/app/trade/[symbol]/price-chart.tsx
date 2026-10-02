@@ -81,8 +81,8 @@ export function PriceChart({
 
     const css = getComputedStyle(document.documentElement);
     const color = (name: string) => css.getPropertyValue(name).trim();
-    const up = color("--color-up-strong");
-    const down = color("--color-down-strong");
+    const up = color("--color-up");
+    const down = color("--color-down");
 
     const chart = createChart(container, {
       autoSize: true,
@@ -94,16 +94,17 @@ export function PriceChart({
       },
       // Grille discrète : elle ne doit pas concurrencer les données.
       grid: {
-        vertLines: { color: `${color("--color-border")}66` },
-        horzLines: { color: `${color("--color-border")}66` },
+        vertLines: { color: color("--color-line") },
+        horzLines: { color: color("--color-line") },
       },
+      // Réticule ambre, couleur des éléments interactifs du terminal.
       crosshair: {
-        vertLine: { color: color("--color-border-strong"), labelBackgroundColor: color("--color-surface-2") },
-        horzLine: { color: color("--color-border-strong"), labelBackgroundColor: color("--color-surface-2") },
+        vertLine: { color: color("--color-amber"), labelBackgroundColor: color("--color-amber") },
+        horzLine: { color: color("--color-amber"), labelBackgroundColor: color("--color-amber") },
       },
-      rightPriceScale: { borderColor: color("--color-border") },
+      rightPriceScale: { borderColor: color("--color-line") },
       timeScale: {
-        borderColor: color("--color-border"),
+        borderColor: color("--color-line"),
         timeVisible: interval !== "1d",
         tickMarkFormatter: (time: Time, type: TickMarkType) =>
           new Intl.DateTimeFormat("fr-FR", TICK_FORMATS[type]).format(toDate(time)),
@@ -201,8 +202,9 @@ export function PriceChart({
         time: m.time as UTCTimestamp,
         position: m.side === "buy" ? "belowBar" : "aboveBar",
         shape: m.side === "buy" ? "arrowUp" : "arrowDown",
-        color: css.getPropertyValue(m.side === "buy" ? "--color-up-strong" : "--color-down-strong").trim(),
-        text: m.side === "buy" ? "Achat" : "Vente",
+        color: css.getPropertyValue(m.side === "buy" ? "--color-up" : "--color-down").trim(),
+        // Une lettre (A / V), comme sur les plateformes pro : un mot serait tronqué au bord droit.
+        text: m.side === "buy" ? "A" : "V",
       })),
     );
   }, [markers]);
@@ -216,7 +218,7 @@ export function PriceChart({
       {legend && (
         <dl
           aria-label="Valeurs de la bougie"
-          className="num flex min-h-5 flex-wrap gap-x-3 gap-y-1 px-1 pb-2 text-xs text-muted"
+          className="num flex min-h-5 flex-wrap gap-x-3 gap-y-1 pb-2 text-xs text-muted"
         >
           <div className="text-fg">
             <dt className="sr-only">Date</dt>

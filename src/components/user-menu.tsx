@@ -1,27 +1,20 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 import { authClient } from "@/lib/auth-client";
 
-import { Avatar } from "./avatar";
 import { ConfirmButton } from "./confirm-dialog";
-import { SignOutIcon } from "./icons";
-
-const signOutClass =
-  "flex size-9 items-center justify-center gap-2 rounded-lg text-sm text-muted transition-colors hover:bg-surface-2 hover:text-fg disabled:opacity-50 md:w-auto md:px-2.5";
+import { button } from "./ui";
 
 export function UserMenu({
   name,
-  image,
   isGuest,
   canLinkGithub,
 }: {
   name: string;
-  image: string | null;
   isGuest: boolean;
   canLinkGithub: boolean;
 }) {
@@ -37,60 +30,36 @@ export function UserMenu({
     router.refresh();
   }
 
-  const signOutContent = (
-    <>
-      <SignOutIcon aria-hidden size={18} />
-      <span className="hidden md:inline">Déconnexion</span>
-    </>
-  );
-
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex items-center gap-3 text-xs">
       {isGuest && canLinkGithub && (
-        <Link
-          href="/login?next=/portfolio"
-          className="hidden h-9 items-center rounded-lg px-2.5 font-medium text-primary hover:bg-surface-2 lg:flex"
-        >
-          Sauvegarder ma progression
+        <Link href="/login?next=/portfolio" className="caps hidden text-amber hover:underline lg:inline">
+          Sauvegarder
         </Link>
       )}
-
-      <div className="flex items-center gap-2 pr-1">
-        {image ? (
-          <Image src={image} alt="" width={28} height={28} className="rounded-full" />
-        ) : (
-          <Avatar name={name} />
-        )}
-        <span className="hidden max-w-40 truncate lg:inline">{name}</span>
-        {isGuest && (
-          <span className="rounded-md border border-border px-1.5 py-0.5 text-xs text-muted">Invité</span>
-        )}
-      </div>
-
-      {/* Action sensible : séparée visuellement du reste du menu. */}
-      <span aria-hidden className="h-5 w-px bg-border" />
-
+      <p className="hidden max-w-56 truncate sm:block">
+        {isGuest && <span className="caps text-muted">Invité · </span>}
+        {name}
+      </p>
       {isGuest ? (
         <ConfirmButton
-          ariaLabel="Déconnexion"
-          className={signOutClass}
+          className={button.small}
           title="Supprimer ce portefeuille ?"
           description="Avec un compte invité, la déconnexion supprime définitivement votre portefeuille et votre historique."
           confirmLabel="Se déconnecter"
           pendingLabel="Déconnexion…"
           onConfirm={signOut}
         >
-          {signOutContent}
+          Déconnexion
         </ConfirmButton>
       ) : (
         <button
           type="button"
-          aria-label="Déconnexion"
           disabled={pending}
           onClick={() => startTransition(signOut)}
-          className={signOutClass}
+          className={button.small}
         >
-          {signOutContent}
+          Déconnexion
         </button>
       )}
     </div>

@@ -1,75 +1,81 @@
-# Design system PaperTrade
+# Design system PaperTrade · direction « Terminal »
 
 Référence unique pour l'interface. Les tokens vivent dans
 [`src/app/globals.css`](../../src/app/globals.css) ; ce document explique d'où ils viennent.
 
-## Origine
+## Intention
 
-Généré avec la skill [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) :
+Un terminal de marché plutôt qu'une application grand public : dense, lisible, pensé pour le
+clavier. L'objectif est aussi d'éviter les marqueurs des interfaces générées en série (palette
+Tailwind par défaut, cartes arrondies partout, grilles d'icônes sur fond teinté, rangées de
+statistiques).
 
-```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "fintech crypto trading dashboard" \
-  --design-system --variance 4 --motion 3 --density 8
-```
+Une première version suivait la palette « Fintech/Crypto » de la skill
+[UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill). Elle a été remplacée par
+cette direction ; la skill a servi à cadrer la typographie et les règles d'accessibilité.
 
-| Recommandation              | Décision                                                                       |
-| --------------------------- | ------------------------------------------------------------------------------ |
-| Style « Minimalism & Swiss » | Retenu : grille, hiérarchie typographique, un seul accent                      |
-| Palette « Fintech/Crypto »  | Retenue, contrastes vérifiés et deux teintes ajustées (voir plus bas)          |
-| Typo Orbitron / Exo 2       | Écartée : trop « web3 » pour un public de recruteurs                           |
-| Typo « Financial Trust »    | Retenue : IBM Plex Sans, plus Plex Mono pour les chiffres (« Dashboard Data ») |
-| Accent violet `#8B5CF6`     | Écarté : un seul accent (or) en style Swiss ; la skill déconseille le violet IA |
-| Pattern « Trust & Authority » | Écarté : logos clients et « Contact Sales » sans objet pour un simulateur     |
-| Animations GSAP             | Écartées : transitions CSS de 150 à 200 ms, suffisantes au réglage `motion 3`  |
+| Recommandation de la skill                     | Décision                                                         |
+| ---------------------------------------------- | ---------------------------------------------------------------- |
+| Une seule police à chasse fixe (« Terminal CLI ») | Retenu                                                         |
+| Tailles 12 / 14 / 16 px uniquement             | Retenu, plus 24 px pour le titre et le prix principal            |
+| Pas de gras (il dénature les mono)             | Retenu : graisses 400 et 500, hiérarchie par la couleur et les capitales |
+| JetBrains Mono                                 | Écarté : la police par défaut des interfaces « terminal » générées ; IBM Plex Mono à la place |
+| Style « Data-Dense Dashboard »                 | Retenu : tableaux serrés, marges de 8 à 16 px                    |
 
 ## Couleurs
 
-Ratios de contraste WCAG mesurés sur le fond (`bg`) et les cartes (`surface`).
+Ratios de contraste WCAG mesurés sur le fond de page (`bg`) et les en-têtes de panneau (`head`,
+le fond le plus clair).
 
-| Token           | Valeur    | Usage                                  | bg     | surface |
-| --------------- | --------- | -------------------------------------- | ------ | ------- |
-| `bg`            | `#0F172A` | Fond de page                           |        |         |
-| `surface`       | `#222735` | Cartes                                 |        |         |
-| `surface-2`     | `#272F42` | Survols, champs secondaires            |        |         |
-| `border`        | `#334155` | Séparateurs décoratifs                 |        |         |
-| `border-strong` | `#64748B` | Contours de champs et boutons          | 3,75   | 3,13    |
-| `fg`            | `#F8FAFC` | Texte principal                        | 17,06  | 14,24   |
-| `muted`         | `#94A3B8` | Texte secondaire                       | 6,96   | 5,81    |
-| `primary`       | `#F59E0B` | Marque, action principale, focus       | 8,31   | 6,94    |
-| `up`            | `#2BB3A4` | Texte en hausse                        | 6,87   | 5,74    |
-| `down`          | `#F26D6A` | Texte en baisse                        | 6,10   | 5,09    |
-| `up-strong`     | `#26A69A` | Bougies, bouton Acheter                |        |         |
-| `down-strong`   | `#EF5350` | Bougies, bouton Vendre                 |        |         |
+| Token         | Valeur    | Usage                                     | bg    | head  |
+| ------------- | --------- | ----------------------------------------- | ----- | ----- |
+| `bg`          | `#070707` | Fond de page                              |       |       |
+| `panel`       | `#0E0E0E` | Corps des panneaux                        |       |       |
+| `head`        | `#171717` | Barres de titre, pistes de jauge          |       |       |
+| `hover`       | `#1C1C1C` | Survol des lignes                         |       |       |
+| `line`        | `#2A2A2A` | Filets décoratifs                         |       |       |
+| `line-strong` | `#737373` | Contours de champs et de boutons          | 4,25  | 3,78  |
+| `fg`          | `#E8E4DA` | Texte principal (blanc cassé, moins dur)  | 15,87 | 14,12 |
+| `muted`       | `#9B968A` | Libellés, texte secondaire                | 6,83  | 6,08  |
+| `amber`       | `#FFAB2E` | Interface : titres, codes, focus, action  | 10,66 | 9,49  |
+| `up`          | `#35D08A` | Hausse, achat                             | 10,11 | 9,00  |
+| `down`        | `#FF6259` | Baisse, vente, actions destructives       | 6,85  | 6,10  |
 
-Les teintes `*-strong` viennent de la recommandation « Candlestick » de la skill (couleurs de
-TradingView). Elles descendent sous 4,5:1 sur les cartes : elles servent aux remplissages, pas au
-texte. Le texte sur l'or ou sur ces remplissages utilise `on-primary` (`#0F172A`, au moins 5:1).
+Le vert et le rouge sont réservés aux variations et au sens des ordres. Tout ce qui est interactif
+ou structurant est en ambre. Le texte sur fond ambre, vert ou rouge utilise `on-amber` (`#070707`,
+au moins 6,8:1).
 
 ## Typographie
 
-- **IBM Plex Sans** (400 à 700) : interface. Base de 16 px, 14 px dans les tableaux de données.
-- **IBM Plex Mono** avec chiffres tabulaires (`num`) : prix, quantités, montants. Les prix qui
-  changent en direct ne font pas bouger la mise en page.
-- Chargées avec `next/font` : auto-hébergées, sans décalage de mise en page.
+- **IBM Plex Mono** seule, en 400 et 500, chargée avec `next/font` (auto-hébergée, sans décalage).
+- Libellés en capitales espacées (`caps`), jamais pour du texte courant.
+- Chiffres tabulaires (`num`) : les prix en direct ne font pas bouger la mise en page.
 
-## Icônes
+## Composants
 
-[Phosphor](https://phosphoricons.com) (bibliothèque par défaut de la skill), en trait « regular »,
-« fill » pour l'état actif. Importées une à une via [`src/components/icons.ts`](../../src/components/icons.ts).
-Logos des cryptomonnaies : [cryptocurrency-icons](https://github.com/spothq/cryptocurrency-icons)
-(CC0), dans `public/crypto/`.
+- **Panneau** ([`panel.tsx`](../../src/components/panel.tsx)) : barre de titre ambre en
+  capitales, filets de 1 px, aucun arrondi ni ombre.
+- **Ligne à points de conduite** (`Leader`) : « LIBELLÉ ........ valeur », dans un `<dl>`.
+- **Boutons** ([`ui.ts`](../../src/components/ui.ts)) : rectangles pleins (ambre, vert, rouge) ou
+  filaires, libellés en capitales.
+- **Symboles** à la place des icônes : ▲ ▼ pour les variations, ● pour la connexion, ↕ pour le tri.
+  Toujours `aria-hidden`, l'information est aussi donnée en texte.
+
+## Clavier
+
+- **Ligne de commande** : un code d'actif (`BTC`, `ethereum`, `BTC GO`) ou d'écran (`MKT`, `PORT`,
+  `RANK`), puis Entrée. ⌘K ou Ctrl+K y place le curseur.
+- **Touches de fonction** : F1 Marchés, F2 Portefeuille, F3 Classement.
+- Aucun raccourci à touche unique imprimable (WCAG 2.1.4) : les raccourcis utilisent un
+  modificateur ou une touche de fonction.
 
 ## Règles appliquées
 
-- **Pas d'information par la couleur seule** : hausse/baisse avec flèche et signe, bougies doublées
-  d'une légende O/H/L/C, rangs du classement en chiffres en plus des médailles.
-- **Focus visible** : contour or de 2 px sur tous les éléments interactifs, lien d'évitement
-  « Aller au contenu ».
-- **Cibles** : 44 px pour les actions principales, 32 px minimum ailleurs (24 px requis sur le web).
+- **Pas d'information par la couleur seule** : flèches et signes pour les variations, légende
+  O/H/L/C sous le graphique, rangs écrits en chiffres.
+- **Focus visible** : contour ambre de 2 px, lien d'évitement « Aller au contenu ».
 - **Actions destructives** confirmées dans un `<dialog>` natif, focus sur « Annuler ».
-- **Formulaire d'ordre** : libellé visible, validation immédiate du montant, message de résultat
-  annoncé (`role="status"`) avec icône.
-- **Chargement** : squelettes aux dimensions du contenu (`loading.tsx`), `aria-busy`.
-- **Mouvement** : `prefers-reduced-motion` respecté (surlignage des prix, pastille « En direct »).
-- **Mobile** : vérifié à 375 px, sans défilement horizontal de la page ; colonnes secondaires
-  masquées dans les tableaux.
+- **Mouvement** : `prefers-reduced-motion` respecté (surlignage des prix, indicateur d'attente,
+  pastille « En direct »).
+- **Mobile** : vérifié à 375 px ; colonnes secondaires masquées, aucun défilement horizontal de la
+  page.

@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { ArrowsClockwiseIcon, GithubLogoIcon, UserCircleIcon, WarningCircleIcon } from "@/components/icons";
+import { Spinner } from "@/components/spinner";
+import { button } from "@/components/ui";
 import { authClient } from "@/lib/auth-client";
 
 export function SignInButtons({
@@ -42,40 +43,26 @@ export function SignInButtons({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {githubEnabled && (
         <button
           type="button"
           onClick={signInWithGithub}
           disabled={pending}
-          className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-fg font-semibold text-bg transition-opacity hover:opacity-90 disabled:opacity-50"
+          className={`${guestEnabled ? button.secondary : button.primary} w-full`}
         >
-          <GithubLogoIcon aria-hidden size={20} weight="fill" />
           Continuer avec GitHub
         </button>
       )}
       {guestEnabled && (
-        <button
-          type="button"
-          onClick={signInAsGuest}
-          disabled={pending}
-          className={`flex h-11 w-full items-center justify-center gap-2 rounded-lg font-semibold transition-opacity disabled:opacity-50 ${
-            githubEnabled
-              ? "border border-border-strong hover:bg-surface-2"
-              : "bg-primary text-on-primary hover:opacity-90"
-          }`}
-        >
-          {pending ? (
-            <ArrowsClockwiseIcon aria-hidden size={20} className="motion-safe:animate-spin" />
-          ) : (
-            <UserCircleIcon aria-hidden size={20} />
-          )}
-          {pending ? "Création du compte…" : "Essayer sans compte"}
+        <button type="button" onClick={signInAsGuest} disabled={pending} className={`${button.primary} w-full`}>
+          {pending && <Spinner />}
+          {pending ? "Création du compte" : "Essayer sans compte"}
         </button>
       )}
       {error && (
-        <p role="alert" className="flex items-center justify-center gap-1.5 text-sm text-down">
-          <WarningCircleIcon aria-hidden size={16} />
+        <p role="alert" className="text-sm text-down">
+          <span aria-hidden>! </span>
           {error}
         </p>
       )}

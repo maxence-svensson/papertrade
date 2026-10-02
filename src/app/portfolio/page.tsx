@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { Panel } from "@/components/panel";
 import { TradeHistory } from "@/components/trade-history";
 import { getPortfolio, getTrades } from "@/lib/data/portfolio";
 import { requireUser } from "@/lib/session";
@@ -15,11 +16,11 @@ export default async function PortfolioPage() {
   const plural = account.tradeCount > 1 ? "s" : "";
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Portefeuille</h1>
-          <p className="text-sm text-muted">
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border border-line bg-panel px-3 py-2.5">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <h1 className="caps text-amber">Portefeuille</h1>
+          <p className="text-xs text-muted">
             {account.tradeCount} ordre{plural} passé{plural} · capital de départ 10 000 $
           </p>
         </div>
@@ -29,12 +30,9 @@ export default async function PortfolioPage() {
       <PortfolioOverview cash={account.cash} holdings={account.holdings} realizedPnl={account.realizedPnl} />
 
       {trades.length > 0 && (
-        <section aria-labelledby="historique" className="space-y-3">
-          <h2 id="historique" className="font-semibold">
-            Historique des ordres
-          </h2>
+        <Panel title="Historique des ordres" aside={`${trades.length} ordre${trades.length > 1 ? "s" : ""}`} bodyClassName="">
           <TradeHistory trades={trades} />
-        </section>
+        </Panel>
       )}
     </div>
   );

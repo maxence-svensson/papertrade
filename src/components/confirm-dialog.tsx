@@ -2,7 +2,7 @@
 
 import { useId, useRef, useState, useTransition } from "react";
 
-import { WarningCircleIcon } from "./icons";
+import { button } from "./ui";
 
 /**
  * Bouton qui demande confirmation avant une action destructive, dans une
@@ -12,7 +12,6 @@ import { WarningCircleIcon } from "./icons";
 export function ConfirmButton({
   children,
   className,
-  ariaLabel,
   title,
   description,
   confirmLabel,
@@ -21,7 +20,6 @@ export function ConfirmButton({
 }: {
   children: React.ReactNode;
   className?: string;
-  ariaLabel?: string;
   title: string;
   description: string;
   confirmLabel: string;
@@ -49,7 +47,6 @@ export function ConfirmButton({
     <>
       <button
         type="button"
-        aria-label={ariaLabel}
         aria-haspopup="dialog"
         onClick={() => dialogRef.current?.showModal()}
         className={className}
@@ -65,22 +62,19 @@ export function ConfirmButton({
         onClick={(event) => {
           if (event.target === event.currentTarget && !pending) event.currentTarget.close();
         }}
-        className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-border bg-surface p-0 text-fg shadow-2xl backdrop:bg-black/70"
+        className="m-auto w-[calc(100%-2rem)] max-w-md border border-down bg-panel p-0 text-fg backdrop:bg-black/80"
       >
-        <div className="space-y-4 p-6">
-          <div className="flex gap-3">
-            <WarningCircleIcon aria-hidden size={24} weight="fill" className="shrink-0 text-down" />
-            <div className="space-y-1">
-              <h2 id={`${id}-title`} className="font-semibold">
-                {title}
-              </h2>
-              <p id={`${id}-description`} className="text-sm text-muted">
-                {description}
-              </p>
-            </div>
-          </div>
+        <div className="border-b border-down bg-down px-3 py-1.5">
+          <h2 id={`${id}-title`} className="caps text-xs text-on-amber">
+            {title}
+          </h2>
+        </div>
+        <div className="space-y-4 p-4 text-sm">
+          <p id={`${id}-description`} className="text-muted">
+            {description}
+          </p>
           {failed && (
-            <p role="alert" className="text-sm text-down">
+            <p role="alert" className="text-down">
               L&apos;opération a échoué. Réessayez.
             </p>
           )}
@@ -90,16 +84,11 @@ export function ConfirmButton({
               autoFocus
               disabled={pending}
               onClick={() => dialogRef.current?.close()}
-              className="h-10 rounded-lg border border-border-strong px-4 text-sm font-medium transition-colors hover:bg-surface-2 disabled:opacity-50"
+              className={button.secondary}
             >
               Annuler
             </button>
-            <button
-              type="button"
-              disabled={pending}
-              onClick={confirm}
-              className="h-10 rounded-lg bg-down-strong px-4 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 disabled:opacity-60"
-            >
+            <button type="button" disabled={pending} onClick={confirm} className={button.danger}>
               {pending ? pendingLabel : confirmLabel}
             </button>
           </div>

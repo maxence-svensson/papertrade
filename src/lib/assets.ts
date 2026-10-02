@@ -1,15 +1,15 @@
 /** Cryptomonnaies disponibles à la négociation, cotées en USDT sur Binance. */
 export const ASSETS = [
-  { symbol: "BTCUSDT", base: "BTC", name: "Bitcoin", color: "#f7931a" },
-  { symbol: "ETHUSDT", base: "ETH", name: "Ethereum", color: "#8c8cf7" },
-  { symbol: "SOLUSDT", base: "SOL", name: "Solana", color: "#14f195" },
-  { symbol: "BNBUSDT", base: "BNB", name: "BNB", color: "#f3ba2f" },
-  { symbol: "XRPUSDT", base: "XRP", name: "XRP", color: "#9ca3af" },
-  { symbol: "ADAUSDT", base: "ADA", name: "Cardano", color: "#3b82f6" },
-  { symbol: "DOGEUSDT", base: "DOGE", name: "Dogecoin", color: "#c2a633" },
-  { symbol: "AVAXUSDT", base: "AVAX", name: "Avalanche", color: "#e84142" },
-  { symbol: "LINKUSDT", base: "LINK", name: "Chainlink", color: "#2a5ada" },
-  { symbol: "LTCUSDT", base: "LTC", name: "Litecoin", color: "#a6a9aa" },
+  { symbol: "BTCUSDT", base: "BTC", name: "Bitcoin" },
+  { symbol: "ETHUSDT", base: "ETH", name: "Ethereum" },
+  { symbol: "SOLUSDT", base: "SOL", name: "Solana" },
+  { symbol: "BNBUSDT", base: "BNB", name: "BNB" },
+  { symbol: "XRPUSDT", base: "XRP", name: "XRP" },
+  { symbol: "ADAUSDT", base: "ADA", name: "Cardano" },
+  { symbol: "DOGEUSDT", base: "DOGE", name: "Dogecoin" },
+  { symbol: "AVAXUSDT", base: "AVAX", name: "Avalanche" },
+  { symbol: "LINKUSDT", base: "LINK", name: "Chainlink" },
+  { symbol: "LTCUSDT", base: "LTC", name: "Litecoin" },
 ] as const;
 
 export type Asset = (typeof ASSETS)[number];

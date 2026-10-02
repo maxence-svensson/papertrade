@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { AssetIcon } from "@/components/asset-icon";
-import { ArrowRightIcon, CoinsIcon } from "@/components/icons";
-import { LivePrice, PriceChange } from "@/components/live-price";
+import { Leader, Panel } from "@/components/panel";
 import { TradeHistory } from "@/components/trade-history";
+import { button } from "@/components/ui";
 import { assetFromSlug, assetSlug } from "@/lib/assets";
 import { getCandles } from "@/lib/binance";
 import { getPortfolio, getTrades } from "@/lib/data/portfolio";
@@ -16,7 +15,7 @@ import { IntervalTabs } from "./interval-tabs";
 import { OrderForm } from "./order-form";
 import { PositionCard } from "./position-card";
 import { PriceChart, type ChartMarker } from "./price-chart";
-import { TickerStats } from "./ticker-stats";
+import { QuoteBar } from "./ticker-stats";
 
 export async function generateMetadata({ params }: PageProps<"/trade/[symbol]">): Promise<Metadata> {
   const asset = assetFromSlug((await params).symbol);
@@ -24,6 +23,7 @@ export async function generateMetadata({ params }: PageProps<"/trade/[symbol]">)
 }
 
 export default async function TradePage({ params, searchParams }: PageProps<"/trade/[symbol]">) {
+  // Déjà vérifié dans le layout ; garde le typage de `asset`.
   const asset = assetFromSlug((await params).symbol);
   if (!asset) notFound();
 
@@ -52,32 +52,11 @@ export default async function TradePage({ params, searchParams }: PageProps<"/tr
     .reverse();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-        <div className="flex items-center gap-4">
-          <AssetIcon asset={asset} size={48} />
-          <div>
-            <h1 className="flex items-baseline gap-2 text-xl font-semibold tracking-tight">
-              {asset.name}
-              <span className="rounded-md bg-surface-2 px-1.5 py-0.5 text-xs font-medium text-muted">
-                {asset.base} / USDT
-              </span>
-            </h1>
-            <p className="flex items-baseline gap-3">
-              <LivePrice symbol={asset.symbol} className="text-2xl font-semibold" />
-              <PriceChange symbol={asset.symbol} className="text-sm font-medium" />
-            </p>
-          </div>
-        </div>
-        <TickerStats symbol={asset.symbol} />
-      </div>
+    <div className="space-y-3">
+      <QuoteBar asset={asset} />
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <section aria-label="Graphique" className="min-w-0 rounded-xl border border-border bg-surface p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <IntervalTabs path={path} current={interval} />
-            <span className="hidden text-xs text-muted sm:inline">Source : Binance</span>
-          </div>
+      <div className="grid gap-3 lg:grid-cols-[1fr_340px]">
+        <Panel title={`Graphique · ${asset.base}/USDT`} aside={<IntervalTabs path={path} current={interval} />}>
           <PriceChart
             key={`${asset.symbol}-${interval}`}
             name={asset.name}
@@ -86,50 +65,37 @@ export default async function TradePage({ params, searchParams }: PageProps<"/tr
             candles={candles}
             markers={markers}
           />
-        </section>
+        </Panel>
 
-        <aside
-          aria-label="Passer un ordre"
-          className="self-start rounded-xl border border-border bg-surface p-5 lg:sticky lg:top-20"
-        >
+        <Panel title="Ticket d'ordre" className="self-start lg:sticky lg:top-24" bodyClassName="p-4">
           {account ? (
             <OrderForm asset={asset} cash={account.cash} holdingQuantity={position?.quantity ?? null} />
           ) : (
-            <div className="flex flex-col items-center gap-4 py-10 text-center">
-              <span className="grid size-12 place-items-center rounded-full bg-primary/10 text-primary">
-                <CoinsIcon aria-hidden size={26} />
-              </span>
-              <div className="space-y-1">
-                <h2 className="font-semibold">Tradez {asset.base}</h2>
-                <p className="text-sm text-muted">
-                  Créez un compte invité en un clic et recevez 10 000 $ fictifs.
-                </p>
-              </div>
-              <Link
-                href={`/login?next=${encodeURIComponent(path)}`}
-                className="flex h-11 items-center gap-2 rounded-lg bg-primary px-5 font-semibold text-on-primary transition-opacity hover:opacity-90"
-              >
+            <div className="space-y-4">
+              <p className="leading-relaxed text-muted">
+                Ouvrez un compte invité pour passer des ordres sur {asset.base} : un clic, sans e-mail.
+              </p>
+              <dl>
+                <Leader label="Capital offert">10 000,00 $</Leader>
+              </dl>
+              <Link href={`/login?next=${encodeURIComponent(path)}`} className={`${button.primary} w-full`}>
                 Commencer à trader
-                <ArrowRightIcon aria-hidden size={18} weight="bold" />
               </Link>
             </div>
           )}
-        </aside>
+        </Panel>
       </div>
 
       {position && <PositionCard asset={asset} quantity={position.quantity} costBasis={position.costBasis} />}
 
       {session && (
-        <section aria-labelledby="ordres" className="space-y-3">
-          <h2 id="ordres" className="font-semibold">
-            Vos ordres sur {asset.base}
-          </h2>
+        <Panel title={`Ordres · ${asset.base}`} bodyClassName="">
           <TradeHistory
             trades={trades.slice(0, 20)}
             showAsset={false}
-            emptyMessage={`Aucun ordre sur ${asset.name} pour le moment.`}
+            emptyMessage={`Aucun ordre sur ${asset.base} pour le moment.`}
           />
-        </section>
+        </Panel>
       )}
     </div>
   );

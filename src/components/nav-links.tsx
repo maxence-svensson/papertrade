@@ -1,36 +1,55 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-import { ChartLineUpIcon, TrophyIcon, WalletIcon } from "./icons";
-
-const LINKS = [
-  { href: "/markets", label: "Marchés", icon: ChartLineUpIcon, match: ["/markets", "/trade"] },
-  { href: "/portfolio", label: "Portefeuille", icon: WalletIcon, match: ["/portfolio"] },
-  { href: "/leaderboard", label: "Classement", icon: TrophyIcon, match: ["/leaderboard"] },
+/** Écrans principaux, accessibles aussi par les touches de fonction F1 à F3. */
+const SCREENS = [
+  { key: "F1", href: "/markets", label: "Marchés", match: ["/markets", "/trade"] },
+  { key: "F2", href: "/portfolio", label: "Portefeuille", match: ["/portfolio"] },
+  { key: "F3", href: "/leaderboard", label: "Classement", match: ["/leaderboard"] },
 ];
 
-export function NavLinks({ className = "" }: { className?: string }) {
+export function NavLinks() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Les touches de fonction ne sont pas des caractères : elles ne gênent ni la
+  // saisie ni les lecteurs d'écran (WCAG 2.1.4).
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      const screen = SCREENS.find((s) => s.key === event.key);
+      if (!screen) return;
+      event.preventDefault();
+      router.push(screen.href);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [router]);
 
   return (
-    <nav aria-label="Navigation principale" className={`flex gap-1 overflow-x-auto text-sm ${className}`}>
-      {LINKS.map(({ href, label, icon: Icon, match }) => {
+    <nav aria-label="Navigation principale" className="flex overflow-x-auto">
+      {SCREENS.map(({ key, href, label, match }) => {
         const active = match.some((prefix) => pathname.startsWith(prefix));
         return (
           <Link
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            // La page active est signalée par la couleur ET par un trait sous le lien.
-            className={`relative flex h-11 items-center gap-2 rounded-md px-2.5 whitespace-nowrap transition-colors sm:h-auto ${
-              active
-                ? "font-medium text-fg after:absolute after:inset-x-2.5 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary"
-                : "text-muted hover:text-fg"
+            aria-keyshortcuts={key}
+            className={`caps flex h-9 items-center gap-2 border-r border-line px-3 text-xs whitespace-nowrap transition-colors ${
+              active ? "bg-amber text-on-amber" : "text-fg hover:bg-hover"
             }`}
           >
-            <Icon aria-hidden size={18} weight={active ? "fill" : "regular"} className={active ? "text-primary" : ""} />
+            <kbd
+              className={`hidden px-1 text-[11px] sm:inline ${
+                active ? "bg-on-amber text-amber" : "border border-line text-muted"
+              }`}
+            >
+              {key}
+            </kbd>
             {label}
           </Link>
         );

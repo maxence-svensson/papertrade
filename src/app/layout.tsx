@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Mono } from "next/font/google";
 
 import { PricesProvider } from "@/components/prices-provider";
 import { SiteHeader } from "@/components/site-header";
@@ -7,17 +7,11 @@ import { getTickersSafe } from "@/lib/binance";
 
 import "./globals.css";
 
-// « Financial Trust » (IBM Plex Sans) pour l'interface, Plex Mono pour les chiffres.
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-plex-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
+// Une seule police, à chasse fixe, en deux graisses : le gras dénature le dessin des mono.
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -33,23 +27,23 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const tickers = await getTickersSafe();
 
   return (
-    <html lang="fr" className={`${plexSans.variable} ${plexMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col font-sans">
+    <html lang="fr" className={`${plexMono.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col text-sm">
         <a
           href="#contenu"
-          className="sr-only rounded-md bg-primary px-3 py-2 font-medium text-on-primary focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50"
+          className="caps sr-only bg-amber px-3 py-2 text-on-amber focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50"
         >
           Aller au contenu
         </a>
         <PricesProvider initial={tickers}>
           <SiteHeader />
-          <main id="contenu" className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+          <main id="contenu" className="mx-auto w-full max-w-[1400px] flex-1 px-3 py-4 sm:px-4">
             {children}
           </main>
-          <footer className="border-t border-border">
-            <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-6 text-xs text-muted sm:flex-row sm:justify-between sm:px-6">
-              <p>Projet éducatif : aucune transaction réelle, ne constitue pas un conseil en investissement.</p>
-              <p>Données de marché : Binance (prix en USDT).</p>
+          <footer className="border-t border-line text-xs text-muted">
+            <div className="mx-auto flex max-w-[1400px] flex-col gap-1 px-3 py-3 sm:flex-row sm:justify-between sm:px-4">
+              <p>Projet éducatif · aucune transaction réelle · pas un conseil en investissement</p>
+              <p>Données de marché : Binance, prix en USDT</p>
             </div>
           </footer>
         </PricesProvider>

@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 
-import { ArrowsClockwiseIcon, WarningCircleIcon } from "@/components/icons";
+import { Panel } from "@/components/panel";
+import { button } from "@/components/ui";
 
 export default function ErrorPage({
   error,
@@ -16,20 +17,14 @@ export default function ErrorPage({
   }, [error]);
 
   return (
-    <div className="flex flex-col items-center gap-4 py-20 text-center">
-      <WarningCircleIcon aria-hidden size={40} className="text-down" />
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold">Une erreur est survenue</h1>
+    <div className="mx-auto max-w-lg py-10">
+      <Panel headingLevel="p" title="Erreur" bodyClassName="space-y-4 p-4">
+        <h1 className="text-2xl">Une erreur est survenue</h1>
         <p className="text-muted">Les données de marché sont peut-être momentanément indisponibles.</p>
-      </div>
-      <button
-        type="button"
-        onClick={() => retry()}
-        className="flex h-11 items-center gap-2 rounded-lg border border-border-strong px-5 font-medium transition-colors hover:bg-surface"
-      >
-        <ArrowsClockwiseIcon aria-hidden size={18} />
-        Réessayer
-      </button>
+        <button type="button" onClick={() => retry()} className={button.secondary}>
+          Réessayer
+        </button>
+      </Panel>
     </div>
   );
 }

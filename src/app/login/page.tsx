@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { CheckCircleIcon, InfoIcon } from "@/components/icons";
-import { LogoMark } from "@/components/logo";
+import { Leader, Panel } from "@/components/panel";
 import { githubEnabled } from "@/lib/auth";
 import { getSession, safeReturnPath } from "@/lib/session";
 
 import { SignInButtons } from "./sign-in-buttons";
 
 export const metadata: Metadata = { title: "Connexion" };
-
-const PERKS = [
-  "10 000 $ fictifs pour démarrer",
-  "Prix réels de 10 cryptomonnaies, en direct",
-  "Portefeuille, historique et classement",
-];
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const { next } = await searchParams;
@@ -27,43 +20,40 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   if (session && (!isGuest || !githubEnabled)) redirect(returnTo);
 
   return (
-    <div className="mx-auto max-w-md py-6 sm:py-12">
-      <div className="space-y-6 rounded-xl border border-border bg-surface p-6 sm:p-8">
-        <div className="space-y-3 text-center">
-          <div className="flex justify-center">
-            <LogoMark size={40} />
-          </div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {isGuest ? "Sauvegarder ma progression" : "Commencer à trader"}
+    <div className="mx-auto max-w-lg py-4 sm:py-10">
+      <Panel
+        headingLevel="p"
+        title={isGuest ? "Session invité · sauvegarde" : "Connexion"}
+        bodyClassName="space-y-5 p-4 sm:p-6"
+      >
+        <div className="space-y-2">
+          <h1 className="text-2xl leading-tight">
+            {isGuest ? "Sauvegarder ma progression" : "Ouvrir une session"}
           </h1>
-          <p className="text-sm text-muted">
+          <p className="leading-relaxed text-muted">
             {isGuest
               ? "Connectez-vous avec GitHub : votre portefeuille d'invité sera conservé."
-              : "Aucune carte bancaire, aucun argent réel."}
+              : "Aucune carte bancaire, aucune adresse e-mail, aucun argent réel."}
           </p>
         </div>
 
         {!isGuest && (
-          <ul className="space-y-2 text-sm">
-            {PERKS.map((perk) => (
-              <li key={perk} className="flex items-center gap-2.5">
-                <CheckCircleIcon aria-hidden size={18} weight="fill" className="shrink-0 text-up" />
-                {perk}
-              </li>
-            ))}
-          </ul>
+          <dl>
+            <Leader label="Capital de départ">10 000,00 $</Leader>
+            <Leader label="Actifs">10 · prix Binance en direct</Leader>
+            <Leader label="Inclus">Portefeuille · historique · classement</Leader>
+          </dl>
         )}
 
         <SignInButtons githubEnabled={githubEnabled} guestEnabled={!session} returnTo={returnTo} />
 
         {!session && (
-          <p className="flex gap-2 border-t border-border pt-4 text-xs leading-relaxed text-muted">
-            <InfoIcon aria-hidden size={16} className="shrink-0" />
+          <p className="border-t border-line pt-4 text-xs leading-relaxed text-muted">
             Le compte invité est lié à ce navigateur. Il est supprimé à la déconnexion ou après 7 jours
             d&apos;inactivité.
           </p>
         )}
-      </div>
+      </Panel>
     </div>
   );
 }

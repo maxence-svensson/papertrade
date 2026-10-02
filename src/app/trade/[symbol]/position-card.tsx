@@ -1,5 +1,6 @@
 "use client";
 
+import { Leader, Panel } from "@/components/panel";
 import { useTicker } from "@/components/prices-provider";
 import { Trend } from "@/components/trend";
 import type { Asset } from "@/lib/assets";
@@ -20,37 +21,24 @@ export function PositionCard({
   const value = price === undefined ? null : qty * price;
   const pnl = value === null ? null : value - cost;
 
-  const rows = [
-    { label: "Quantité", value: `${formatQuantity(quantity)} ${asset.base}` },
-    { label: "Prix de revient moyen", value: formatPrice(cost / qty) },
-    { label: "Valeur actuelle", value: value === null ? "—" : formatUsd(value) },
-  ];
-
   return (
-    <section aria-labelledby="position" className="rounded-xl border border-border bg-surface p-5">
-      <h2 id="position" className="mb-4 font-semibold">
-        Votre position
-      </h2>
-      <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
-        {rows.map((row) => (
-          <div key={row.label}>
-            <dt className="text-muted">{row.label}</dt>
-            <dd className="num mt-1 font-medium">{row.value}</dd>
-          </div>
-        ))}
-        <div>
-          <dt className="text-muted">Plus-value latente</dt>
-          <dd className="mt-1 font-medium">
-            {pnl === null ? (
-              "—"
-            ) : (
-              <Trend value={pnl}>
-                {formatUsd(pnl)} ({formatPercent(pnl / cost)})
-              </Trend>
-            )}
-          </dd>
-        </div>
+    <Panel title={`Position · ${asset.base}`}>
+      <dl className="grid gap-x-8 md:grid-cols-2">
+        <Leader label="Quantité">
+          {formatQuantity(quantity)} {asset.base}
+        </Leader>
+        <Leader label="Prix de revient moyen">{formatPrice(cost / qty)}</Leader>
+        <Leader label="Valeur actuelle">{value === null ? "—" : formatUsd(value)}</Leader>
+        <Leader label="Plus-value latente">
+          {pnl === null ? (
+            "—"
+          ) : (
+            <Trend value={pnl}>
+              {formatUsd(pnl)} ({formatPercent(pnl / cost)})
+            </Trend>
+          )}
+        </Leader>
       </dl>
-    </section>
+    </Panel>
   );
 }
